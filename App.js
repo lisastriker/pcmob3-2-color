@@ -5,6 +5,7 @@ import {createStackNavigator} from "@react-navigation/stack";
 import {NavigationContainer} from  "@react-navigation/native";
 import BlockRGB from "./components/BlockRGB"
 import { FlatList } from 'react-native-gesture-handler';
+import { greaterThan } from 'react-native-reanimated';
 
  const COLORS = [
    { red: 255, green: 128, blue: 0, id: "0" },
@@ -13,10 +14,12 @@ import { FlatList } from 'react-native-gesture-handler';
    { red:0, green:0, blue:0, id:"3"}
  ];
 
-function HomeScreen(){
+function HomeScreen({navigation}){
    const [colorArray, setColorArray] = useState(COLORS);
-   function renderItems({item}){
-    return <BlockRGB red={item.red} green={item.green} blue={item.blue}/>;
+   function renderItems({item}){ //onPress takes function name not function. If you put function,it will straight away call even before press
+    return <TouchableOpacity onPress={()=>navigation.navigate('Detail', {red:item.red, green:item.green, blue:item.blue})}>
+      <BlockRGB red={item.red} green={item.green} blue={item.blue}/>
+      </TouchableOpacity>;
   }
 
   function addColor() {
@@ -50,15 +53,23 @@ function HomeScreen(){
   );
 }
 
+function DetailScreen({route}){
+  const {red,green,blue} = route.params
+return <View>
+  <Text>red:{red}</Text>
+  <Text>green:{green}</Text>
+  <Text>blue:{blue}</Text>
+</View>
+}
+
 const Stack = createStackNavigator()
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen}>
-
-        </Stack.Screen>
+        <Stack.Screen name="Home" component={HomeScreen}></Stack.Screen>
+        <Stack.Screen name="Detail" component={DetailScreen}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
