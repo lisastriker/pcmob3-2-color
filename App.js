@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {createStackNavigator} from "@react-navigation/stack";
 import {NavigationContainer} from  "@react-navigation/native";
 import BlockRGB from "./components/BlockRGB"
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 
  const COLORS = [
    { red: 255, green: 128, blue: 0, id: "0" },
@@ -38,12 +38,12 @@ function HomeScreen(){
        <TouchableOpacity
         style={{ height: 40, justifyContent: "center" }}
         onPress={addColor}>
-        <Text style={{ color: "red" }}>Add Colour</Text>
+        <Text>Add Colour</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={{ height: 40, justifyContent: "center" }}
         onPress={resetColor}>
-        <Text style={{ color: "red" }}>Reset Colour</Text>
+        <Text>Reset Colour</Text>
       </TouchableOpacity>
       <FlatList style={{width:"100%"}} data={colorArray} renderItem={renderItems}/>
       </View>
