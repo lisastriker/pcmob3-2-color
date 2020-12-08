@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 import {createStackNavigator} from "@react-navigation/stack";
 import {NavigationContainer} from  "@react-navigation/native";
 import BlockRGB from "./components/BlockRGB"
@@ -16,12 +16,19 @@ import { greaterThan } from 'react-native-reanimated';
 
 function HomeScreen({navigation}){
    const [colorArray, setColorArray] = useState(COLORS);
-   function renderItems({item}){ //onPress takes function name not function. If you put function,it will straight away call even before press
-    return <TouchableOpacity onPress={()=>navigation.navigate('Detail', {red:item.red, green:item.green, blue:item.blue})}>
+   function renderItems({item}){ //onPress takes function name not function call. If you put function,it will straight away call even before press
+    return <TouchableOpacity onPress={()=>navigation.navigate('Detail', {...item})}> 
       <BlockRGB red={item.red} green={item.green} blue={item.blue}/>
       </TouchableOpacity>;
-  }
+  } //()=>navigation.navigate is the name of an anonymous function. //{red:item.red, green:item.green, blue:item.blue} = ...item
 
+  useEffect(()=>{
+    navigation.setOptions({
+      headerRight:() => <Button onPress={addColor} title="Add Color"></Button>,
+      headerLeft:()=> <Button onPress={resetColor} title="Reset Color"></Button>
+    });
+  });
+  //Use effect is if you want to change things depending on state update or u want a button or something outside of screen.
   function addColor() {
     let newColor = {
       red: Math.floor(Math.random() * 256),
@@ -38,28 +45,19 @@ function HomeScreen({navigation}){
 
   return(
     <View style={styles.container}>
-       <TouchableOpacity
-        style={{ height: 40, justifyContent: "center" }}
-        onPress={addColor}>
-        <Text>Add Colour</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{ height: 40, justifyContent: "center" }}
-        onPress={resetColor}>
-        <Text>Reset Colour</Text>
-      </TouchableOpacity>
       <FlatList style={{width:"100%"}} data={colorArray} renderItem={renderItems}/>
       </View>
   );
 }
 
-function DetailScreen({route}){
+function DetailScreen({route}){ // style={[styles.container,{color:blue}]} for 2 styles
   const {red,green,blue} = route.params
-return <View>
-  <Text>red:{red}</Text>
-  <Text>green:{green}</Text>
-  <Text>blue:{blue}</Text>
-</View>
+  const total = red+green+blue
+return <View style={[styles.container, {backgroundColor: `rgb(${red},${green},${blue})`}]}> 
+  <Text style={total<350 ? styles.detailTextLight : styles.detailText}>red: {red}</Text>
+  <Text style={total<350 ? styles.detailTextLight : styles.detailText}>green: {green}</Text>
+  <Text style={total<350 ? styles.detailTextLight : styles.detailText}>blue: {blue}</Text>
+  </View>
 }
 
 const Stack = createStackNavigator()
@@ -82,4 +80,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  detailText:{
+    fontSize:40,
+    color:"black"
+  },
+  detailTextLight:{
+    color:"white",
+    fontSize:40,
+  }
 });
